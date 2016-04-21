@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Zużycie prądu</string>
+    <string name="action_sign_in">Zaloguj się lub zarejestruj</string>
+    <string name="action_sign_in_short">Zaloguj się</string>
+    <string name="error_field_required">Pole jest wymagane</string>
+    <string name="error_incorrect_password">Hasło jest nieprawidłowe</string>
+    <string name="error_invalid_email">Adres e-mail jest nieprawidłowy</string>
+    <string name="error_invalid_password">Hasło jest za krótkie</string>
+    <string name="prompt_password">Hasło (opcjonalne)</string>
+    <string name="action_date">Pick a date</string>
+    <string name="action_device">Pick sensors</string>
+    <string name="action_sync">Synchronize...</string>
+</resources>
