@@ -11,4 +11,5 @@
     <string name="action_date">Pick a date</string>
     <string name="action_device">Pick sensors</string>
     <string name="action_sync">Synchronize...</string>
+    <string name="check_devices">Check devices</string>
 </resources>

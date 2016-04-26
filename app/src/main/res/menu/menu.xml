@@ -10,7 +10,8 @@
         android:id="@+id/action_device"
         android:icon="@android:drawable/ic_menu_manage"
         android:title="@string/action_device"
-        app:showAsAction="always"/>
+        app:showAsAction="always">
+    </item>
     <item
         android:id="@+id/action_sync"
         android:icon="@android:drawable/ic_popup_sync"

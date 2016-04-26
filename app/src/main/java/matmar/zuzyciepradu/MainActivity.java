@@ -6,15 +6,15 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.appeaser.sublimepickerlibrary.SublimePicker;
 import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
 import com.appeaser.sublimepickerlibrary.helpers.SublimeListenerAdapter;
-import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions;
 import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicker;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity implements DeviceDialogFragment.DeviceDialogListener {
     Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
         public void onCancelled() {
         }
     };
-    SublimeOptions sublimeOptions;
+
+    DeviceDialogFragment deviceDialogFragment;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -49,8 +50,26 @@ public class MainActivity extends AppCompatActivity {
                 SublimePickerFragment pickerFrag = new SublimePickerFragment();
                 pickerFrag.setStyle(DialogFragment.STYLE_NO_TITLE,0);
                 pickerFrag.show(getSupportFragmentManager(), "SUBLIME_PICKER");
+                break;
+
+            case (R.id.action_device):
+                if(deviceDialogFragment == null){
+                    deviceDialogFragment = new DeviceDialogFragment();
+                }
+                if(selectedDevices != null){
+                    Bundle bundle = new Bundle();
+                    bundle.putIntegerArrayList("selected_devices",selectedDevices);
+                    deviceDialogFragment.setArguments(bundle);
+                }
+                deviceDialogFragment.show(getSupportFragmentManager(), "DeviceDialogFragment");
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    ArrayList selectedDevices;
+    @Override
+    public void onDialogPositiveClick(DeviceDialogFragment dialog) {
+        selectedDevices = dialog.getSelectedDevices();
     }
 }
