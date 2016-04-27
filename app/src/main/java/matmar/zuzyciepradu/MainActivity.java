@@ -1,16 +1,28 @@
 package matmar.zuzyciepradu;
 
-import android.support.v4.app.DialogFragment;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.DatePicker;
+import android.widget.TimePicker;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements DeviceDialogFragment.DeviceDialogListener {
+public class MainActivity extends AppCompatActivity implements
+        DeviceDialogFragment.DeviceDialogListener, TimePickerDialog.OnTimeSetListener,
+        DatePickerDialog.OnDateSetListener {
+    private static final int START_DATE = 1;
+    private static final int START_TIME = 2;
+    private static final int FINAL_DATE = 3;
+    private static final int FINAL_TIME = 4;
+
     Toolbar toolbar;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,13 +38,16 @@ public class MainActivity extends AppCompatActivity implements DeviceDialogFragm
     }
 
     DeviceDialogFragment deviceDialogFragment;
+    int dateElementWritten;
+    DatePickerFragment datePickerFragment;
+    TimePickerFragment timePickerFragment;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case (R.id.action_date):
-                DeviceDialogFragment newFragment = new DeviceDialogFragment();
-                newFragment.show(getSupportFragmentManager(), "DeviceDialogFragment");
-                newFragment.show(getSupportFragmentManager(), "DeviceDialogFragment");
+                datePickerFragment = new DatePickerFragment();
+                dateElementWritten = START_DATE;
+                datePickerFragment.show(getSupportFragmentManager(), "datePicker");
                 break;
 
             case (R.id.action_device):
@@ -53,5 +68,42 @@ public class MainActivity extends AppCompatActivity implements DeviceDialogFragm
     @Override
     public void onDialogPositiveClick(DeviceDialogFragment dialog) {
         selectedDevices = dialog.getSelectedDevices();
+    }
+
+    int startYear, startMonth, startDay;
+    int finalYear, finalMonth, finalDay;
+    @Override
+    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+        if(dateElementWritten == START_DATE){
+            startYear = i;
+            startMonth = i1;
+            startDay = i2;
+            dateElementWritten = START_TIME;
+            timePickerFragment = new TimePickerFragment();
+            timePickerFragment.show(getSupportFragmentManager(), "timePicker");
+        } else if(dateElementWritten == FINAL_DATE){
+            finalYear = i;
+            finalMonth = i1;
+            finalDay = i2;
+            dateElementWritten = FINAL_TIME;
+            timePickerFragment = new TimePickerFragment();
+            timePickerFragment.show(getSupportFragmentManager(), "timePicker");
+        }
+    }
+
+    int startHour, startMinute;
+    int finalHour, finalMinute;
+    @Override
+    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+        if(dateElementWritten == START_TIME){
+            startHour = i;
+            startMinute = i1;
+            dateElementWritten = FINAL_DATE;
+            datePickerFragment = new DatePickerFragment();
+            datePickerFragment.show(getSupportFragmentManager(), "datePicker");
+        } else if(dateElementWritten == FINAL_TIME){
+            finalHour = i;
+            finalMinute = i1;
+        }
     }
 }
