@@ -7,11 +7,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.appeaser.sublimepickerlibrary.SublimePicker;
-import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
-import com.appeaser.sublimepickerlibrary.helpers.SublimeListenerAdapter;
-import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicker;
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements DeviceDialogFragment.DeviceDialogListener {
@@ -30,26 +25,14 @@ public class MainActivity extends AppCompatActivity implements DeviceDialogFragm
         return true;
     }
 
-    SublimePicker sublimePicker;
-    SublimeListenerAdapter pickerListener = new SublimeListenerAdapter() {
-        @Override
-        public void onDateTimeRecurrenceSet(SublimePicker sublimeMaterialPicker, SelectedDate selectedDate, int hourOfDay, int minute, SublimeRecurrencePicker.RecurrenceOption recurrenceOption, String recurrenceRule) {
-
-        }
-
-        @Override
-        public void onCancelled() {
-        }
-    };
-
     DeviceDialogFragment deviceDialogFragment;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case (R.id.action_date):
-                SublimePickerFragment pickerFrag = new SublimePickerFragment();
-                pickerFrag.setStyle(DialogFragment.STYLE_NO_TITLE,0);
-                pickerFrag.show(getSupportFragmentManager(), "SUBLIME_PICKER");
+                DeviceDialogFragment newFragment = new DeviceDialogFragment();
+                newFragment.show(getSupportFragmentManager(), "DeviceDialogFragment");
+                newFragment.show(getSupportFragmentManager(), "DeviceDialogFragment");
                 break;
 
             case (R.id.action_device):
@@ -61,8 +44,7 @@ public class MainActivity extends AppCompatActivity implements DeviceDialogFragm
                     bundle.putIntegerArrayList("selected_devices",selectedDevices);
                     deviceDialogFragment.setArguments(bundle);
                 }
-                deviceDialogFragment.show(getSupportFragmentManager(), "DeviceDialogFragment");
-
+                deviceDialogFragment.show(getSupportFragmentManager(), "DeviceDialogFragment");//TODO: proof for opening many fragments
         }
         return super.onOptionsItemSelected(item);
     }
