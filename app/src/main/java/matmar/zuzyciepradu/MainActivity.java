@@ -2,6 +2,7 @@ package matmar.zuzyciepradu;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +12,7 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity implements
         DeviceDialogFragment.DeviceDialogListener, TimePickerDialog.OnTimeSetListener,
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
@@ -69,7 +72,8 @@ public class MainActivity extends AppCompatActivity implements
     public void onDialogPositiveClick(DeviceDialogFragment dialog) {
         selectedDevices = dialog.getSelectedDevices();
     }
-
+    //TODO:Second date cannot be older than first one
+    //TODO:Set checked dates and times on second time
     int startYear, startMonth, startDay;
     int finalYear, finalMonth, finalDay;
     @Override
@@ -100,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements
             startMinute = i1;
             dateElementWritten = FINAL_DATE;
             datePickerFragment = new DatePickerFragment();
+            datePickerFragment.getDialog();
             datePickerFragment.show(getSupportFragmentManager(), "datePicker");
         } else if(dateElementWritten == FINAL_TIME){
             finalHour = i;
