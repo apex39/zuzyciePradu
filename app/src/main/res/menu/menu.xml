@@ -16,5 +16,6 @@
         android:id="@+id/action_sync"
         android:icon="@android:drawable/ic_popup_sync"
         android:title="@string/action_sync"
+        android:onClick="requestData"
         app:showAsAction="always"/>
 </menu>

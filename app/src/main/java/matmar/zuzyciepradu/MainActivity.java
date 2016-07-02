@@ -8,10 +8,18 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
+import org.joda.time.DateTime;
+
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -21,17 +29,17 @@ public class MainActivity extends AppCompatActivity implements
     private static final int START_TIME = 2;
     private static final int FINAL_DATE = 3;
     private static final int FINAL_TIME = 4;
-
+    private String sessionCookie;
     Toolbar toolbar;
-
-
+    ArrayList<Values> values;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        sessionCookie = getIntent().getExtras().getString("SESSION_COOKIE");
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
     }
 
     @Override
@@ -67,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    ArrayList selectedDevices;
+    ArrayList<Integer> selectedDevices;
     @Override
     public void onDialogPositiveClick(DeviceDialogFragment dialog) {
         selectedDevices = dialog.getSelectedDevices();
@@ -110,5 +118,18 @@ public class MainActivity extends AppCompatActivity implements
             finalHour = i;
             finalMinute = i1;
         }
+    }
+
+    public boolean requestData(MenuItem item) {
+        long startTime = new DateTime(startYear,startMonth,startDay,startHour,startMinute).getMillis() / 1000; // UNIX TIMESTAMP
+        long finalTime = new DateTime(finalYear,finalMonth,finalDay,finalHour,finalMinute).getMillis() / 1000;
+
+        ValuesRequest valuesRequest = new ValuesRequest(startTime, finalTime, selectedDevices, this, sessionCookie);
+        valuesRequest.sendRequest(this);
+        return false;
+    }
+
+    public void addValues(Values values){
+        this.values.add(values);
     }
 }
