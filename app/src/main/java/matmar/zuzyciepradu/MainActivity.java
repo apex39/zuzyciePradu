@@ -3,6 +3,7 @@ package matmar.zuzyciepradu;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -12,12 +13,27 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.AxisValueFormatter;
+import com.github.mikephil.charting.formatter.FormattedStringCache;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.ViewPortHandler;
+
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
+import org.joda.time.LocalDateTime;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -29,9 +45,14 @@ public class MainActivity extends AppCompatActivity implements
     private static final int START_TIME = 2;
     private static final int FINAL_DATE = 3;
     private static final int FINAL_TIME = 4;
+    private static final LocalDateTime JAN_1_1970 = new LocalDateTime(1970, 1, 1, 2, 0);
     private String sessionCookie;
     Toolbar toolbar;
-    ArrayList<Values> values;
+    ArrayList<Values> valuesArrayList;
+    LineChart chart;
+    ArrayList<ILineDataSet> dataSets;
+    LineData data;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements
         sessionCookie = getIntent().getExtras().getString("SESSION_COOKIE");
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        valuesArrayList = new ArrayList<>();
+        chart = (LineChart) findViewById(R.id.chart);
+        dataSets = new ArrayList<ILineDataSet>();
 
     }
 
@@ -121,15 +145,38 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public boolean requestData(MenuItem item) {
-        long startTime = new DateTime(startYear,startMonth,startDay,startHour,startMinute).getMillis() / 1000; // UNIX TIMESTAMP
-        long finalTime = new DateTime(finalYear,finalMonth,finalDay,finalHour,finalMinute).getMillis() / 1000;
+        DateTime startJodaTime = new DateTime(startYear,startMonth+1,startDay,startHour,startMinute);
+        DateTimeZone timeZone = DateTimeZone.getDefault();
+        long startTime = new Duration(JAN_1_1970.toDateTime(timeZone), startJodaTime).getMillis() / 1000;// UNIX TIMESTAMP
+
+        DateTime finalJodaTime = new DateTime(finalYear,finalMonth+1,finalDay,finalHour,finalMinute);
+        long finalTime = new Duration(JAN_1_1970.toDateTime(timeZone), finalJodaTime).getMillis() / 1000;
 
         ValuesRequest valuesRequest = new ValuesRequest(startTime, finalTime, selectedDevices, this, sessionCookie);
         valuesRequest.sendRequest(this);
         return false;
     }
 
+
+    private void createChart(){
+        dataSets = new ArrayList<ILineDataSet>();;
+        for(Values values:valuesArrayList){
+            ArrayList<Entry> vals1 = new ArrayList<>();
+            for(int i = 0;i<values.getValues().size();i++){
+                vals1.add(new Entry(i,Float.valueOf(values.getValues().get(i))));
+            }
+
+            LineDataSet setComp1 = new LineDataSet(vals1,String.valueOf(values.deviceId));
+
+            dataSets.add(setComp1);
+            data = new LineData(dataSets);
+            chart.setData(data);
+            chart.invalidate();
+        }
+
+    }
     public void addValues(Values values){
-        this.values.add(values);
+        this.valuesArrayList.add(values);
+        createChart();
     }
 }

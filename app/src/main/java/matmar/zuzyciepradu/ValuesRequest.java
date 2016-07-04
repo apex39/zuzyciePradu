@@ -16,6 +16,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class ValuesRequest {
     RequestQueue requestQueue;
     String sessionCookie;
     private MainActivity mainActivity;
-    Gson gson;
+
     public ValuesRequest(final long startTime, final long endTime, ArrayList<Integer> devices, Context context, String sessionCookie) {
         requestQueue = Volley.newRequestQueue(context);
         this.context = context;
@@ -45,7 +46,7 @@ public class ValuesRequest {
         this.startTime = startTime;
         this.endTime = endTime;
         this.sessionCookie = sessionCookie;
-        gson = new Gson();
+
     }
 
     private void sendRequest(final long startTime, final long endTime, final int device){
@@ -53,10 +54,11 @@ public class ValuesRequest {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Gson gson = new Gson();
                         Values values = new Values(device);
-                        ArrayList<Values.Value> receivedValues = gson.fromJson(response,new TypeToken<ArrayList<ArrayList<Values.Value>>>() {}.getType());
+                        Values.Value[] receivedValues = gson.fromJson(response,Values.Value[].class);
                         values.setValues(receivedValues);
-                        mainActivity.addValues(values);
+                        sendValues(values);
                     }
                 },
                 new Response.ErrorListener() {
@@ -89,7 +91,10 @@ public class ValuesRequest {
     public void sendRequest(MainActivity mainActivity) {
         if(this.mainActivity == null) this.mainActivity = mainActivity;
         for(int element : devices){
-            sendRequest(startTime, endTime, element);
+            sendRequest(startTime, endTime, element+1);
         }
+    }
+    private void sendValues(Values values){
+        mainActivity.addValues(values);
     }
 }
